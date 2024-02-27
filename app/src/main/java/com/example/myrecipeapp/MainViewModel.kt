@@ -8,12 +8,21 @@ import kotlinx.coroutines.launch
 
 class MainViewModel:ViewModel(){
 
+
+    private var _submealState = mutableStateOf(Submealstate())
+    val submealstate:State<Submealstate> = _submealState
+
+
     private var _categoriesState = mutableStateOf(Recipestate())
     val categoriesState:State<Recipestate> = _categoriesState
 
     init {
         fetchcategories()
     }
+    init {
+        fetchsubmeal()
+    }
+
 
     private fun fetchcategories(){
         viewModelScope.launch {
@@ -31,11 +40,36 @@ class MainViewModel:ViewModel(){
         }
     }
 
+    //need to solve this category as parameter right now just passing it with "Vegetarian"
+    fun fetchsubmeal(){
+        viewModelScope.launch {
+            try {
+                val responsesubmeal= submealservice.getsubMeals("Vegetarian")
+                _submealState.value=_submealState.value.copy(
+                    list1 = responsesubmeal.meals,
+                    loading1 = false,
+                    error1 = null)
+            }catch(e:Exception){
+               _submealState.value=_submealState.value.copy(
+                   loading1 = false,
+                   error1 = "error fetching data${e.message}")
+            }
+        }
+    }
+
+
 
 
     data class Recipestate(
         val loading:Boolean=true,
         val list:List<Category> = emptyList(),
         val error:String?=null
+    )
+
+    data class Submealstate(
+        val loading1:Boolean=true,
+        val list1:List<Meal> = emptyList(),
+        val error1:String?=null,
+
     )
 }

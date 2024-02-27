@@ -10,12 +10,13 @@ private val retrofit=Retrofit.Builder().baseUrl("https://www.themealdb.com/api/j
     .build()
 
 val recipeservice = retrofit.create(ApiService::class.java)
+val submealservice = retrofit.create(ApiService::class.java)
 
 interface ApiService{
     @GET("categories.php")
     suspend fun getCategories():CategoriesResponse
 
     @GET("filter.php")
-    suspend fun getMealsByCategory(@Query("c") category: String): mealresponse
+    suspend fun getsubMeals(@Query("c") category: String): mealresponse
 
 }
